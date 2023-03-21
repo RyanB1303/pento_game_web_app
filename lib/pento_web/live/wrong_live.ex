@@ -1,21 +1,34 @@
 defmodule PentoWeb.WrongLive do
   use Phoenix.LiveView, layout: {PentoWeb.LayoutView, "live.html"}
 
-  def mount(__params, _session, socket) do
-    {:ok, assign(socket, score: 0, message: "Make a guess", answer: answer(), time: time(), answered: false)}
+  # alias Pento.Accounts
+
+  def mount(__params, session, socket) do
+    {:ok,
+     assign(socket,
+       score: 0,
+       message: "Make a guess",
+       answer: answer(),
+       time: time(),
+       answered: false,
+       session_id: session["live_socket_id"],
+       username: socket.assigns.current_user.username
+     )}
   end
 
   def handle_event("restart", _, socket) do
     {:noreply,
-      assign(socket, score: 0, 
-        message: "Make a guess", 
-        answer: answer(), 
-        time: time(),
-        answered: false)}
+     assign(socket,
+       score: 0,
+       message: "Make a guess",
+       answer: answer(),
+       time: time(),
+       answered: false
+     )}
   end
 
-  def handle_event("guess", %{"number" => guess} = data, socket) do
-    answer = socket.assigns.answer |> to_string() 
+  def handle_event("guess", %{"number" => guess}, socket) do
+    answer = socket.assigns.answer |> to_string()
 
     if guess == answer do
       message = "Your guess #{guess}. Correct. Congratulations!"
@@ -46,16 +59,15 @@ defmodule PentoWeb.WrongLive do
 
   def render(assigns) do
     ~H"""
-    <h1>Your Score: <%= @score %></h1>
-    <h2>
-      <%= @message %>
-      It's <%= @time %>
-    </h2>
+    <h1>Username: <%= @username %></h1>
+    <h2>Score: <%= @score %></h2>
     <%= if @answered do %>
+      <p>Well Done!</p>
       <a href="#" phx-click="restart" >
         Restart</a>
     <% end %>
     <h2>
+    <p>Guess the number</p>
       <%= for n <- 1..10 do %>
         <a href="#" phx-click="guess" phx-value-number= {n}>
           <%= n %></a>
