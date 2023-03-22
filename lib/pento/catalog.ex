@@ -101,4 +101,21 @@ defmodule Pento.Catalog do
   def change_product(%Product{} = product, attrs \\ %{}) do
     Product.changeset(product, attrs)
   end
+
+  @doc """
+  Return a decreased product unit_price 
+  error if unit_price higher than before or same
+
+  ## Examples
+    iex> product = %Product{}
+    iex> attrs = %{name: "Sample Product", sku: 123_123, description: "Sample Product", unit_price: 10.0}
+    iex> {:ok, new_prod } = create_product(product, attrs)
+    {:ok, %Product{name: "Sample Product", sku: 123_123, description: "Sample Product", unit_price: 10.0}}
+    iex> markdown_product(new_prod, %{unit_price: 5.0})
+    {:ok, %Product{name: "Sample Product", sku: 123_123, description: "Sample Product", unit_price: 5.0}}
+  """
+  def markdown_product(%Product{} = product, attrs \\ %{}) do
+    Product.unit_price_changeset(product, attrs)
+    |> Repo.update()
+  end
 end
