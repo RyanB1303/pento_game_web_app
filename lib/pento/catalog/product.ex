@@ -17,6 +17,7 @@ defmodule Pento.Catalog.Product do
     |> cast(attrs, [:name, :description, :unit_price, :sku])
     |> validate_required([:name, :description, :unit_price, :sku])
     |> unique_constraint(:sku)
+    |> validate_length(:name, min: 3, max: 50)
     |> validate_number(:unit_price, greater_than: 0.0)
   end
 
